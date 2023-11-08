@@ -1,0 +1,92 @@
+<html>
+<head>
+    <style>
+        .grid-item {
+            display: block;
+            float: left;
+            padding: 7px;
+        }
+        .preview {
+            grid-row:auto
+        }
+        .price {
+            grid-row:auto;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+    <!-- Buffer -->
+    <script src="/content/13d32b34110faaed72249c780395d4b9964deb240517e3b065091a8e7063593d_0"></script>
+    <!-- BSV@2 -->
+    <script src="/content/1e44d6304eb55e6f58596cc4a7c3baed3247de574b2117028008f2728e8810b0_0"></script>
+    <script>
+        let FEE_ADDRESS = '1ShRUGk5osKeX1eQTazR6VEcZHwMKgTKu';
+        let provider;
+        let pageSize = 48;
+        let page = 0;
+        let API = '';
+        async function initProvider() {
+            if (!provider && 'panda' in window) {
+                provider = window.panda;
+                if (provider?.isReady) {
+                    await provider.connect()
+                }
+            }
+            return provider;
+            alert("Install Panda Wallet Extension")
+        };
+
+        async function loadPage() {
+            const resp = await fetch(`${API}/api/market?limit=${pageSize}&offset=${page * pageSize}`);
+            if (!resp.ok) {
+                let msg = ''
+                try {
+                    msg = `${resp.status} ${await resp.statusText} ${(await resp.json()).message}`;
+                } catch {
+                    msg = `${resp.status} ${await resp.statusText}`;
+                }
+                alert(`HTTP Error: ${msg}`)
+                throw new Error(msg)
+            }
+            const listings = await resp.json();
+            document.getElementById('results').innerHTML = listings.map(renderItem).join(' ');
+        }
+
+        function renderItem(item) {
+            return `<div class="grid-item" onClick=purchaseItem("${item.outpoint}")>
+                <img style="width:200px;height:200px;grid-row-start:1" src="${API}/content/${item.origin?.outpoint}">
+                <div class="price">${item.data?.list?.price / 100000000} BSV</div>
+            </div>`;
+        }
+
+        async function purchaseItem(outpoint) {
+            const { txid } = await provider.purchaseOrdinal({
+                outpoint,
+                marketplaceRate: 0.05,
+                marketplaceAddress: FEE_ADDRESS
+            })
+            
+            console.log('Success:', txid)
+            alert(`Success! ${txid}`)
+        }
+
+        function pageUp() {
+            page++;
+            loadPage();
+        }
+
+        function pageDown() {
+            if (page > 0) page--;
+            loadPage();
+        }
+    </script>
+</head>
+
+<body onload="initProvider()">
+    <div id="results"></div>
+    <button onclick="pageDown()">&lt;</button>
+    <button onclick="pageUp()">&gt;</button>
+    <script>loadPage()</script>
+</body>
+
+</html>

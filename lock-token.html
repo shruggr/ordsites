@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="./simple.css">
+    <!-- Buffer -->
+    <script src="http://ordfs.network/content/13d32b34110faaed72249c780395d4b9964deb240517e3b065091a8e7063593d_0"></script>
+    <!-- BSV@2 -->
+    <script src="http://ordfs.network/content/1e44d6304eb55e6f58596cc4a7c3baed3247de574b2117028008f2728e8810b0_0"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIT - Lock It Token</title>
+    <script>
+        let Buffer = buffer.Buffer;
+        let provider;
+        let API = 'http://locks.gorillapool.io'
+        async function initProvider() {
+            if (provider) {
+                return provider;
+            }
+            if ('panda' in window) {
+                provider = window.panda;
+                if (provider?.isReady) {
+                    await provider.connect();
+                    const { bsvPubKey, ordPubKey, identityPubKey } = await wallet.getPubKeys();
+                    const lockPkh = buffer.B
+
+                    return provider;
+                }
+            }
+            alert("Install Panda Wallet Extension")
+        };
+
+        async function lockCoins() {
+            const provider = await initProvider();
+            const { bsvPubKey, ordPubKey, identityPubKey } = await wallet.getPubKeys();
+            const 
+            const resp = await fetch(`${API}/api/txos/search`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: {
+                    "opns": ""
+                },
+            });
+        }
+    </script>
+</head>
+<body onlock="">
+  <header>
+    <h1>LIT</h1>
+    <p>Lock It Token</p>
+  </header>
+  <main>
+    <form>
+        <div>
+            <label>Lock Address</label>
+            <input type="text" id="name">
+        </div>
+        <div>
+            <label>Bsv20 Address</label>
+            <input type="text" id="name">
+        </div>
+        <div>
+            <label>Satoshis</label>
+            <input type="text" id="name" placeholder="1000">
+        </div>
+        <div>
+            <button>Lock It!</button>
+        </div>
+        <div>
+    </form>
+  </main>
+
+  <footer>
+    <p>Jane Smith's website.</p>
+  </footer>
+</body>
+</html>

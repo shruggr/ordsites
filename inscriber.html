@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="./simple.css">
+    <!-- Buffer -->
+    <script
+        src="https://ordfs.network/content/13d32b34110faaed72249c780395d4b9964deb240517e3b065091a8e7063593d_0"></script>
+    <!-- BSV@2 -->
+    <script
+        src="https://ordfs.network/content/1e44d6304eb55e6f58596cc4a7c3baed3247de574b2117028008f2728e8810b0_0"></script>
+    <script src="./buildInscription.js"></script>
+    <script src="./buildB.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Sat Inscriber</title>
+    <script>
+        let API = 'http://locks.gorillapool.io' 
+        let Buffer = buffer.Buffer;
+        let provider;
+        async function initProvider() {
+            if (provider) {
+                return provider;
+            }
+            if ('panda' in window) {
+                provider = window.panda;
+                if (provider?.isReady) {
+                    await provider.connect();
+
+                    document.getElementById("form").style.display = "block";
+                    document.getElementById("connect").style.display = "none";
+                    return provider;
+                }
+            }
+            alert("Install Panda Wallet Extension")
+        };
+
+        async function doUpload(b = true) {
+            const { ordAddress } = await wallet.getAddresses();
+
+            const file = document.getElementById("file")?.files[0];
+            let contents;
+            // Handle file upload
+            if (file) {
+                const fileBuffer = Buffer.from(e.target.result);
+                const reader = new FileReader();
+                contents = Buffer.from(reader.arrayBuffer());
+            } else {
+                contents = Buffer.from(document.getElementById("text").value);
+            }
+            const name = document.getElementById("name").value;
+            const type = document.getElementById("type").value;
+            let satAmount = 0;
+            if(b) {
+                const script = buildBScript(contents, type, name && {name});
+            } else {
+                const script = buildInscriptionScript(ordAddress, contents, type, name && {name});
+                satAmount = 1;
+            }
+            const {txid} = await provider.sendBsv([{satAmount, script}])
+            alert(`Uploaded to ${txid}`)
+
+        }
+
+        // call initProvider when page is loaded
+        
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>1Sat Inscriber</h1>
+        <p>Simple, yet effective</p>
+    </header>
+    <main>
+        <button id="connect" onclick="initProvider()">Connect</button>
+        <form id="form" style="display:none">
+            <div>
+                <label>Name</label>
+                <input type="text" id="name" value="Testing">
+            </div>
+            <div>
+                <label>Type</label>
+                <input type="text" id="type" value="text/plain">
+            </div>
+            <div>
+                <div style="display:block;float:left;width:49%">
+                    <label>File</label>
+                    <input type="file" id="file">
+                </div>
+                <div style="display:block;float:right;width:49%">
+                    <label>Text</label>
+                    <textarea id="text">STuff</textarea>
+                </div>
+            </div>
+            <div style="width:100%">
+                <button onclick="doUpload(false)">Inscribe</button>
+                <button onclick="doUpload(true)">Upload</button>
+            </div>
+            <div>
+        </form>
+    </main>
+
+    <footer>
+        <p>Jane Smith's website.</p>
+    </footer>
+</body>
+
+</html>
